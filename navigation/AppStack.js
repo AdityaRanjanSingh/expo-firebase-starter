@@ -1,14 +1,18 @@
 import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import { HomeScreen } from "../screens";
+import { HomeScreen,HomeDrawer } from "../screens";
 
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 export const AppStack = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-    </Stack.Navigator>
+    <Drawer.Navigator
+      screenOptions={{ gestureEnabled: false }}
+      drawerContent={(props) => <HomeDrawer {...props} />}
+    >
+      <Drawer.Screen name="Home" component={HomeScreen} />
+    </Drawer.Navigator>
   );
 };
