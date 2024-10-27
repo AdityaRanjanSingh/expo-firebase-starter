@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
   ImageBackground,
   ListRenderItemInfo,
 } from "react-native";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+} from "firebase/firestore/lite";
+
 import { signOut } from "firebase/auth";
+import {} from "firebase/firestore";
 import {
   Avatar,
   Button,
@@ -15,13 +23,9 @@ import {
   Text,
 } from "@ui-kitten/components";
 import { HeartIcon, MessageCircleIcon } from "./extra/icons";
-import { Article } from "./extra/data";
-import { auth } from "../config";
-const data = [
-  Article.howToEatHealthy(),
-  Article.morningWorkouts(),
-  Article.whyWorkoutImportant(),
-];
+import { Article, Profile } from "./extra/data";
+import { app } from "../config/firebase";
+
 // export const HomeScreen = () => {
 //   const handleLogout = () => {
 //     signOut(auth).catch((error) => console.log("Error logging out: ", error));
@@ -39,7 +43,34 @@ const data = [
 //   },
 // });
 
+// Get a list of feed from your database
+
 export const HomeScreen = ({ navigation }) => {
+  const db = getFirestore(app);
+  const [feeds, setFeeds] = useState([]);
+
+  useEffect(() => {
+    async function getFeed() {
+      const feedCol = collection(db, "feeds");
+      const feedSnapshot = await getDocs(feedCol);
+      const feedList = feedSnapshot.docs.map((doc) => doc.data());
+      console.log({ feedList });
+      const articles = feedList.map(
+        (feed) =>
+          new Article(
+            feed.title,
+            feed.description,
+            feed.content,
+            feed.date,
+            new Profile(feed.author, { uri: "https://i.pravatar.cc/300" })
+          )
+      );
+      setFeeds(articles);
+      return feedList;
+    }
+    getFeed();
+  }, []);
+
   const onItemPress = (index) => {
     navigation && navigation.navigate("Article1");
   };
@@ -53,7 +84,7 @@ export const HomeScreen = ({ navigation }) => {
           {info.item.date}
         </Text>
       </View>
-      <Button
+      {/* <Button
         style={styles.iconButton}
         appearance="ghost"
         status="basic"
@@ -68,7 +99,7 @@ export const HomeScreen = ({ navigation }) => {
         accessoryLeft={HeartIcon}
       >
         {`${info.item.likes.length}`}
-      </Button>
+      </Button> */}
     </View>
   );
 
@@ -90,7 +121,7 @@ export const HomeScreen = ({ navigation }) => {
       <List
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        data={data}
+        data={feeds}
         renderItem={renderItem}
       />
     </Layout>
@@ -119,8 +150,8 @@ const styles = StyleSheet.create({
   },
   itemFooter: {
     flexDirection: "row",
-    alignItems:"center",
-    marginHorizontal:5
+    alignItems: "center",
+    margin: 5,
   },
   iconButton: {
     paddingHorizontal: 0,
