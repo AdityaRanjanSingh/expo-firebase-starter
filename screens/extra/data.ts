@@ -6,7 +6,8 @@ export class Article {
     readonly description: string,
     readonly content: string,
     readonly date: string,
-    readonly author: Profile // readonly likes: Like[], // readonly comments: Comment[]
+    readonly author: Profile, // readonly likes: Like[], // readonly comments: Comment[]
+    readonly keywords: string[] // readonly likes: Like[], // readonly comments: Comment[]
   ) {}
 }
 

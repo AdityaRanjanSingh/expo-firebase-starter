@@ -11,6 +11,7 @@ import {
   getDocs,
   addDoc,
 } from "firebase/firestore/lite";
+import { TouchableWebElement } from "@ui-kitten/components/devsupport";
 
 import { signOut } from "firebase/auth";
 import {} from "firebase/firestore";
@@ -21,10 +22,17 @@ import {
   Layout,
   List,
   Text,
+  IconElement,
+  Icon,
+  TopNavigation,
+  TopNavigationAction,
+  Image,
 } from "@ui-kitten/components";
 import { HeartIcon, MessageCircleIcon } from "./extra/icons";
 import { Article, Profile } from "./extra/data";
 import { app } from "../config/firebase";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { DrawerToggleButton } from "@react-navigation/drawer";
 
 // export const HomeScreen = () => {
 //   const handleLogout = () => {
@@ -44,6 +52,13 @@ import { app } from "../config/firebase";
 // });
 
 // Get a list of feed from your database
+const StarIcon = (props): IconElement => <Icon {...props} name="star" />;
+const MenuIcon = (props): IconElement => (
+  <Icon {...props} name="menu-outline" />
+);
+const SearchIcon = (props): IconElement => (
+  <Icon {...props} name="search-outline" />
+);
 
 export const HomeScreen = ({ navigation }) => {
   const db = getFirestore(app);
@@ -62,10 +77,17 @@ export const HomeScreen = ({ navigation }) => {
             feed.description,
             feed.content,
             feed.date,
-            new Profile(feed.author, { uri: "https://i.pravatar.cc/300" })
+            new Profile(feed.author, { uri: "https://i.pravatar.cc/300" }),
+            feed.keywords
           )
       );
-      setFeeds(articles);
+      setFeeds([
+        ...articles,
+        ...articles,
+        ...articles,
+        ...articles,
+        ...articles,
+      ]);
       return feedList;
     }
     getFeed();
@@ -102,29 +124,100 @@ export const HomeScreen = ({ navigation }) => {
       </Button> */}
     </View>
   );
-
   const renderItem = (info) => (
     <Card
       style={styles.item}
-      footer={() => renderItemFooter(info)}
-      onPress={() => onItemPress(info.index)}
+      // footer={() => renderItemFooter(info)}
+      onPress={() => onItemPress(info)}
     >
-      <Text category="h5">{info.item.title}</Text>
-      <Text style={styles.itemContent} appearance="hint" category="s1">
-        {`${info.item.content.substring(0, 82)}...`}
-      </Text>
+      <View style={{ flexDirection: "row" }}>
+        <ImageBackground
+          src={"https://picsum.photos/150/150"}
+          style={{
+            width: 150,
+            marginRight: 16,
+          }}
+        ></ImageBackground>
+        <View
+          style={{
+            flex: 2,
+            flexDirection: "row",
+            flexWrap: "wrap",
+          }}
+        >
+          {info.item.keywords.map((word) => (
+            <Text
+              style={{ marginHorizontal: 4 }}
+              category="c1"
+              appearance="hint"
+            >
+              {word.toUpperCase()}
+            </Text>
+          ))}
+
+          <Text style={{ marginVertical: 8 }} category="h6">
+            {info.item.title}
+          </Text>
+          {/* <Text style={styles.itemContent} appearance="hint" category="s1">
+            {`${info.item.content.substring(0, 82)}...`}
+          </Text> */}
+          <Avatar source={info.item.author.photo} />
+          <View style={styles.itemAuthoringContainer}>
+            <Text category="s2">{info.item.author.fullName}</Text>
+            <Text appearance="hint" category="c1">
+              {info.item.date}
+            </Text>
+          </View>
+        </View>
+      </View>
     </Card>
   );
-
-  return (
-    <Layout style={styles.container} level="2">
-      <List
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
-        data={feeds}
-        renderItem={renderItem}
+  const renderBackAction = (): TouchableWebElement => (
+    <Button
+      style={styles.button}
+      appearance="outline"
+      status="primary"
+      size="small"
+      onPress={() => navigation.openDrawer()}
+      accessoryLeft={MenuIcon}
+    />
+  );
+  const renderRightAction = (): TouchableWebElement => (
+    <View style={{ flexDirection: "row" }}>
+      <Button
+        style={styles.button}
+        appearance="ghost"
+        status="danger"
+        size="giant"
+        accessoryLeft={SearchIcon}
       />
-    </Layout>
+      <Button
+        style={styles.button}
+        appearance="ghost"
+        status="danger"
+        size="giant"
+        accessoryLeft={SearchIcon}
+      />
+    </View>
+  );
+  return (
+    // <SafeAreaView style={{ flex: 1 }}>
+      <Layout style={styles.container} level="1">
+        {/* <TopNavigation
+          alignment="center"
+          accessoryLeft={renderBackAction}
+          // accessoryRight={renderRightAction}
+          style={{  }}
+        /> */}
+
+        <List
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
+          data={feeds}
+          renderItem={renderItem}
+        />
+      </Layout>
+    // </SafeAreaView>
   );
 };
 
@@ -133,14 +226,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   list: {
-    flex: 1,
   },
   listContent: {
-    paddingHorizontal: 16,
     paddingVertical: 8,
+    border: "none",
   },
   item: {
     marginVertical: 8,
+    borderColor: "transparent",
   },
   itemHeader: {
     height: 220,
@@ -152,6 +245,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
+    marginHorizontal: 16,
   },
   iconButton: {
     paddingHorizontal: 0,
