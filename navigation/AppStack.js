@@ -9,6 +9,7 @@ import { HomeScreen, HomeDrawer } from "../screens";
 import ArticleDetail from "../screens/article-detail";
 import { Icon } from "@ui-kitten/components";
 import { HomeBottomNavigation } from "../components/home-bottom-navigation.component";
+import { Button } from "../components";
 
 const Drawer = createDrawerNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -38,12 +39,13 @@ export const AppStack = () => {
     <Drawer.Navigator
       screenOptions={{
         gestureEnabled: false,
+        headerLeft:(props)=><Button {...props}>{Button}</Button>,
         headerShown: false,
       }}
       drawerContent={(props) => <HomeDrawer {...props} />}
     >
       <Drawer.Screen name="Home" component={HomeTabsNavigator} />
-      <Drawer.Screen name="ArticleDetail" component={ArticleDetail} />
+      <Drawer.Screen name="Article1" component={ArticleDetail} />
     </Drawer.Navigator>
   );
 };
