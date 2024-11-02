@@ -12,7 +12,7 @@ import {
   addDoc,
 } from "firebase/firestore/lite";
 import { TouchableWebElement } from "@ui-kitten/components/devsupport";
-
+import { TopNavigationImageTitleShowcase } from "../components/home.top-navigation.component";
 import { signOut } from "firebase/auth";
 import {} from "firebase/firestore";
 import {
@@ -28,7 +28,7 @@ import {
   TopNavigationAction,
   Image,
 } from "@ui-kitten/components";
-import { HeartIcon, MessageCircleIcon } from "./extra/icons";
+import { HeartIcon, HyperlinkIcon } from "./extra/icons";
 import { Article, Profile } from "./extra/data";
 import { app } from "../config/firebase";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -93,8 +93,8 @@ export const HomeScreen = ({ navigation }) => {
     getFeed();
   }, []);
 
-  const onItemPress = (index) => {
-    navigation && navigation.navigate("Article1");
+  const onItemPress = (info) => {
+    navigation && navigation.navigate("ArticleDetail", { item: info.item });
   };
 
   const renderItemFooter = (info) => (
@@ -106,28 +106,26 @@ export const HomeScreen = ({ navigation }) => {
           {info.item.date}
         </Text>
       </View>
-      {/* <Button
+      <Button
         style={styles.iconButton}
         appearance="ghost"
         status="basic"
-        accessoryLeft={MessageCircleIcon}
-      >
-        {`${info.item.comments.length}`}
-      </Button>
+        accessoryLeft={HyperlinkIcon}
+      ></Button>
       <Button
         style={styles.iconButton}
         appearance="ghost"
         status="danger"
         accessoryLeft={HeartIcon}
       >
-        {`${info.item.likes.length}`}
-      </Button> */}
+        {`5`}
+      </Button>
     </View>
   );
   const renderItem = (info) => (
     <Card
       style={styles.item}
-      // footer={() => renderItemFooter(info)}
+      footer={() => renderItemFooter(info)}
       onPress={() => onItemPress(info)}
     >
       <View style={{ flexDirection: "row" }}>
@@ -145,13 +143,14 @@ export const HomeScreen = ({ navigation }) => {
             flexWrap: "wrap",
           }}
         >
-          {info.item.keywords.map((word) => (
+          {info.item.keywords.map((word, index) => (
             <Text
+              key={index}
               style={{ marginHorizontal: 4 }}
               category="c1"
               appearance="hint"
             >
-              {word.toUpperCase()}
+              #{word.toUpperCase()}
             </Text>
           ))}
 
@@ -161,13 +160,13 @@ export const HomeScreen = ({ navigation }) => {
           {/* <Text style={styles.itemContent} appearance="hint" category="s1">
             {`${info.item.content.substring(0, 82)}...`}
           </Text> */}
-          <Avatar source={info.item.author.photo} />
+          {/* <Avatar source={info.item.author.photo} />
           <View style={styles.itemAuthoringContainer}>
             <Text category="s2">{info.item.author.fullName}</Text>
             <Text appearance="hint" category="c1">
               {info.item.date}
             </Text>
-          </View>
+          </View> */}
         </View>
       </View>
     </Card>
@@ -201,15 +200,9 @@ export const HomeScreen = ({ navigation }) => {
     </View>
   );
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-      <Layout style={styles.container} level="1">
-        {/* <TopNavigation
-          alignment="center"
-          accessoryLeft={renderBackAction}
-          // accessoryRight={renderRightAction}
-          style={{  }}
-        /> */}
-
+    <SafeAreaView style={styles.container}>
+      <Layout style={styles.container} level="2">
+        <TopNavigationImageTitleShowcase />
         <List
           style={styles.list}
           contentContainerStyle={styles.listContent}
@@ -217,7 +210,7 @@ export const HomeScreen = ({ navigation }) => {
           renderItem={renderItem}
         />
       </Layout>
-    // </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -225,15 +218,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  list: {
-  },
-  listContent: {
-    paddingVertical: 8,
-    border: "none",
-  },
+  list: {},
+  listContent: {},
   item: {
-    marginVertical: 8,
-    borderColor: "transparent",
+    margin: 16,
   },
   itemHeader: {
     height: 220,

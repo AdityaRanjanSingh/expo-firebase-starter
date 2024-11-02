@@ -3,11 +3,11 @@ import { ImageStyle } from "react-native";
 import { Icon, IconElement } from "@ui-kitten/components";
 
 export const HeartIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name="arrowhead-down-outline" />
+  <Icon {...style} name="bookmark" />
 );
 
-export const MessageCircleIcon = (style: ImageStyle): IconElement => (
-  <Icon {...style} name="arrowhead-up-outline" />
+export const HyperlinkIcon = (style: ImageStyle): IconElement => (
+  <Icon {...style} name="link-2" />
 );
 
 export const GithubIcon = (style: ImageStyle): IconElement => (
